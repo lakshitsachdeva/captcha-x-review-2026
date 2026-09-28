@@ -1,0 +1,8 @@
+{
+  "num_images": 1000,
+  "mean_integrity_score": 0.346,
+  "suspicious_clean_mismatch_count": 654,
+  "mean_background_std": 0.07495489883140777,
+  "mean_fft_high_frequency_ratio": 0.6347824354452329,
+  "mean_background_fft_high_frequency_ratio": 0.6128413763308876
+}

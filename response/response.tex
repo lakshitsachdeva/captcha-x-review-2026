@@ -1,0 +1,115 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{pdftitle={Response to Reviewers - Benchmark Collapse in Text CAPTCHAs},pdfauthor={Anonymous Authors},colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlist{leftmargin=*,itemsep=3pt,topsep=3pt}
+\newcommand{\response}[1]{\par\noindent\textbf{Response.} #1\par}
+\newcommand{\change}[1]{\par\noindent\textbf{Change.} #1\par}
+\title{Point-by-Point Response to the Reviewers\\[4pt]\large Benchmark Collapse in Text CAPTCHAs}
+\author{Anonymous Authors}
+\date{28 September 2026}
+\begin{document}
+\maketitle
+\section*{Overview}
+We thank the editor and reviewers for the detailed assessment. We revised the manuscript around three principles: separate renderer observations from fixed-slot architecture observations; distinguish full-scale seed-17 results from reduced seed-sensitivity evidence; and avoid treating heuristic definitions or the V-Score as stronger theoretical results than the data support. The revision package contains the anonymised source, configuration files, analysis tables, verification reports, and checksums. The original pre-repair image archive and its verifier log were not preserved; this is now stated explicitly and the corresponding claim is softened.
+
+\section*{New analyses and retained limitations}
+\begin{itemize}
+\item We re-read the full-scale tables and corrected the collapse set, V-Score interpretation, taxonomy denominators, matched-training terminology, difficulty-matched spread, and core/full-scale protocol distinction.
+\item We ran the existing five-seed reduced fixed-slot sweep (seeds 17, 42, 99, 123, 256; 3,000 images per generator-condition; 450 test examples per cell). Matched-medium exact accuracy was $0.941\pm0.047$ for \texttt{opencv\_text} and $0.549\pm0.171$ for \texttt{pil\_controlled}. These are seed standard deviations for the reduced pilot, not Wilson intervals for the full-scale run.
+\item We attempted a reduced CRNN architecture-family check (1,000/200/200 examples per generator, three epochs). It did not reach non-zero exact accuracy before the planned stop. We retain the checkpoints and logs, report this negative convergence result, and remove any claim that the full-scale collapse pattern has been demonstrated across architectures. A converged full-scale CRNN/ViT/ConvNeXt matrix remains future work.
+\item We did not reconstruct the original pre-repair renderer state because its images and log are absent. We provide the corrected-renderer audit and the available captcha-library clean proxy, explicitly labeled as a proxy.
+\end{itemize}
+
+\section*{Editor: Essential items}
+\subsection*{E1. Separate generator effects from architecture artifacts}
+\response{We agree. The revised abstract, diagnosis, limitations, and conclusion now describe \texttt{captcha\_image} and \texttt{wand\_text} results as interactions between rendering geometry and the fixed-slot preprocessing. We no longer call these generators intrinsically resilient or resistant to collapse. We added the reduced CRNN attempt and its negative convergence result, but do not present it as a successful cross-architecture validation. The full-scale 4$\times$4 matrix remains explicitly fixed-slot evidence, and a full converged second-family matrix is identified as required future work.}
+\change{Section ``Architecture-family and seed-sensitivity pilot'', the abstract, Definition 2 discussion, the \texttt{captcha\_image} diagnosis, Limitations, and Conclusion.}
+
+\subsection*{E2. Reproducible generator-honesty audit}
+\response{We agree that the submitted table could not support a literal claim about the original renderer. The original pre-repair images and verifier output cannot be reconstructed from the surviving artifacts. We now say this plainly in the contribution, audit section, reproducibility section, and response. The table caption identifies \texttt{captcha\_image}@clean as a closest available captcha-library proxy and \texttt{pil\_controlled}@clean as the corrected release; it is not labeled as the original baseline. The revision package includes the verifier source, CSV reports, JSON summaries, diagnostic report, representative generator figures, and source/archive checksums. The anonymized review artifact is now available at https://github.com/lakshitsachdeva/captcha-x-review-2026.}
+\change{Abstract; Generator Honesty Audit; Table 2 caption; Reproducibility and Data Availability statements; anonymised audit files in the revision package.}
+
+\subsection*{E3. V-Score key result and table reconciliation}
+\response{We agree and have withdrawn the ranking-reversal claim. Recalculation over all sixteen matched generator--difficulty rows gives Spearman $\rho=1.00$ between exact accuracy and V-Score. The defensible result is that similar-looking accuracy conditions can differ in calibration and entropy; the score supplies context rather than a different ordering. We state that the implemented score has an attainable upper bound of 0.6 because $w_1+w_2=0.6$ and the entropy term is non-positive. We explain that the default weights are a descriptive choice, not a theoretically justified optimum. The sensitivity computation covers all sixteen rows; the table shows five illustrative top rows and the complete CSV is included as an artifact.}
+\change{Equation 6 discussion, Table 12 caption and key-result paragraph, sensitivity paragraph, and full sensitivity CSV.}
+
+\section*{Editor: Major items}
+\subsection*{M1. Single seed and confidence intervals}
+\response{We agree that Wilson intervals quantify only test-set sampling. We now report the completed five-seed reduced pilot and its seed standard deviations, while keeping it separate from the 160,000-image seed-17 matrix. The revised text no longer calls the Wilson intervals evidence of training reliability.}
+\change{Training Setup and Limitations; seed-pilot tables and JSON summary.}
+
+\subsection*{M2. Human baseline and collapse definition}
+\response{We agree. No human data were collected. The value $\tau_{\mathrm{human}}=0.85$ is now described only as a literature-derived sensitivity anchor. With the strict $>$ definition, the matched full-scale collapse-like set contains 7 cells at $\tau=0.85$, 8 at $0.75$, 6 at $0.90$, and 6 at $0.95$. We remove language implying an empirical human comparison.}
+\change{Definition 2, Limitations, and Conclusion.}
+
+\subsection*{M3. Status of Proposition 1}
+\response{We agree. The proposition is now titled ``Operational indicators of fixed-slot collapse'' and is explicitly described as a diagnostic checklist, not a proved sufficient-condition theorem. We remove the unconstrained universal $\kappa$, replace it with a descriptive $K\log|\mathcal V|/n_{\mathrm{train}}$ ratio, state that conditional mutual information was not measured, and state that the width coefficient of variation was collected only for \texttt{captcha\_image}.}
+\change{Formal Definitions and all references to Proposition 1.}
+
+\subsection*{M4. Operationalising $(\varepsilon,\delta)$-honesty}
+\response{We now specify $\phi_P$ as the coordinate-wise median of 1,000 corrected-PIL reference images generated before testing. The operational vector contains normalized background standard deviation, background high-frequency FFT ratio, and foreground-pixel fraction, all scaled to $[0,1]$; $\varepsilon=0.01$ is Euclidean distance on that normalized vector. We also separate this definition from the legacy flag in Table 2: its raw thresholds are background standard deviation $>2.5$ on the 0--255 scale or background FFT ratio $>0.18$. Mean pixel standard deviation is relabeled as a luminance/stroke-coverage diagnostic rather than distortion energy. The text states that thresholds require validation or tuning across generator families.}
+\change{Definition 1, audit method, Table 2 caption, and verifier README.}
+
+\subsection*{M5. Calibration and uncertainty definitions}
+\response{We now define sequence confidence as the geometric mean of the five per-slot maximum softmax probabilities. Entropy is the mean per-slot categorical entropy in nats, normalized by $\log|\mathcal V|$. ECE uses sequence confidence and exact-string correctness with 15 equal-width bins. Temperature is a positive logit divisor, not an accuracy ratio.}
+\change{Evaluation Metrics and Table 9 caption.}
+
+\subsection*{M6. OOD values below chance and energy reference}
+\response{We now explain that AUROC below 0.5 means entropy is directionally inverted for that designated OOD pair. We checked the implementation convention (ID labels 0, OOD labels 1, higher entropy as the OOD score). The manuscript reports entropy only; the energy-based citation is now clearly scoped as related work rather than an experiment performed here.}
+\change{OOD subsection and Reliability Layer.}
+
+\subsection*{M7. Training protocol and duplicated figures}
+\response{We now state in the setup and Table 6 caption that ``matched'' means matched generator, not matched difficulty: all difficulty rows are evaluated by a model trained on that generator's medium split. We reconcile 99.875\% (the separate 8,000-image core protocol, 5,600/1,600/800) with 99.67\% (the full-scale medium-trained \texttt{pil\_controlled}@clean cell, 1,500 test images). We label the full-scale 70/15/15 split and the distinct core 70/20/10 split separately.}
+\change{Benchmark Configuration, Training Setup, Matched-Generator caption, and Held-Out Test Performance.}
+
+\subsection*{M8. Synthetic-only scope and security framing}
+\response{We agree. The abstract, threat model, limitations, and conclusion now say that the evidence concerns controlled synthetic benchmark behavior and does not establish breakability of deployed services. The 55$\times$ value is labeled as a cross-condition range; the difficulty-matched medium comparison is 99.80\% versus 3.60\% (27.7$\times$). Causal language is changed to describe renderer--architecture interaction rather than rendering structure alone.}
+\change{Abstract, threat model, diagnosis, Limitations, and Conclusion.}
+
+\subsection*{M9. Failure taxonomy and denominators}
+\response{We now state that insertion and deletion are structurally zero because the fixed-slot decoder always emits five characters. We rename the repeated-character category ``repeat'' to avoid collision with benchmark collapse. Table rows pool the four trained models for a condition (6,000 predictions) and report percentages among incorrect predictions. For \texttt{captcha\_image}@medium, 5,891 substitutions are 99.08\% of 5,946 incorrect predictions; the earlier 98.18\% number was the count divided by all 6,000 predictions and has been removed.}
+\change{Taxonomy text, caption, table headers, and V-Score failure-count paragraph.}
+
+\subsection*{M10. Literature coverage}
+\response{We added ABINet, VisionLAN, SVTR, PARSeq, and TrOCR to position fixed-slot decoding against modern variable-width, language-aware, and transformer-based scene-text recognition. We also added WILDS and DomainBed to distinguish our renderer-controlled transfer protocol from the broader domain-generalization literature. The revised text states what is CAPTCHA-specific here: a fixed label space and sampling protocol with the renderer as the controlled domain variable, plus an honesty audit.}
+\change{Related Work and references.}
+
+\section*{Editor: Minor items}
+\begin{enumerate}
+\item We acknowledge that temperature scaling barely changes NLL for the weak \texttt{wand\_text} and \texttt{captcha\_image} models.
+\item We correct the Table 9 caption: NLL decreases when scaling helps, and $T$ is a positive logit temperature. Validation values and full-scale test values are identified as different splits/protocols.
+\item Internal artifact filenames are confined to the reproducibility/analysis discussion and package; the main claims no longer depend on filenames.
+\item Figure 2's caption now distinguishes implemented generator/recognition layers from the reliability research layers.
+\item We rename the taxonomy category to ``repeat'' to avoid the terminology collision with benchmark collapse.
+\item We corrected the Section 5/7 and Section 3/4.1 cross-reference wording.
+\item We corrected the Python captcha-library attribution to Hsiaoming Yang (GitHub: lepture) in the revised bibliography.
+\item We performed a prose pass: ``performs perfectly'' is now 0.9994; undefined ``OOPs'' is removed; the fixed-slot subject and generator/model distinction are corrected; scorecard and bypass language is narrowed; repeated statements are shortened.
+\item The manuscript and response remain anonymised. PDF metadata is set to Anonymous Authors; no author names or affiliations appear in the revised files.
+\end{enumerate}
+
+\section*{Reviewer 1}
+\response{The editor's E1--E3 and M1--M10 responses above address the substantive points raised by Reviewer 1. In addition, the revised text explicitly identifies the V-Score as heuristic, the honesty feature choice as operational rather than universal, the reduced CRNN pilot as non-converged, and the five-seed pilot as reduced-protocol evidence.}
+
+\section*{Reviewer 2}
+\subsection*{1. Placeholder human baseline}
+\response{Addressed under M2: no human study is claimed; $0.85$ is a sensitivity anchor and the count is reported for plausible thresholds.}
+\subsection*{2. Single seed}
+\response{Addressed under M1: the five-seed reduced pilot is reported with mean and standard deviation; the full-scale matrix remains seed 17.}
+\subsection*{3. Fixed-slot model}
+\response{Addressed under E1: a reduced CRNN attempt is documented as a negative convergence result, and the architecture-invariant claim is removed.}
+\subsection*{4. Data protection and encryption}
+\response{The artifact package contains synthetic images only and no personal or production CAPTCHA data. The revised Responsible Use section now states that any future mirror or deployment should use encryption at rest and in transit, separate key management, least-privilege access, and checksums. These controls protect artifacts but cannot establish benchmark honesty; encryption papers are therefore discussed as operational safeguards rather than treated as evidence for the benchmark claims.}
+\subsection*{5. Universal applicability of $\varepsilon=0.01$}
+\response{Addressed under M4: the feature scale and threshold are explicit, and the revised text says the threshold is an operational starting point requiring family-specific validation, not a universal constant.}
+\subsection*{6. Synthetic-only evaluation}
+\response{We retain the synthetic-only scope to avoid live-service interaction and to isolate renderer effects. The revised threat model and limitations explicitly reject extrapolation to deployed services and identify real-service validation as separate future work.}
+
+\section*{Files changed}
+The revision package contains the revised manuscript source and PDF, this anonymised response PDF, the bibliography, full-scale analysis tables, five-seed summaries, honesty-audit reports, verifier/reliability scripts, CRNN pilot checkpoints/logs, and a source manifest with SHA-256 checksums. The anonymized review artifact repository is available at https://github.com/lakshitsachdeva/captcha-x-review-2026.
+\end{document}

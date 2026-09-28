@@ -1,0 +1,50 @@
+{
+  "architecture": "crnn_clean",
+  "best_val_exact_accuracy": 0.0,
+  "test_exact_accuracy": 0.0,
+  "test_char_accuracy": 0.0,
+  "test_avg_edit_distance": 5.0,
+  "epochs_completed": 3,
+  "checkpoint": "revision_2026_09_28/experiments/crnn_models/opencv_text/best_model_zoo.pth",
+  "history": [
+    {
+      "epoch": 1,
+      "train_accuracy": 0.0,
+      "train_char_accuracy": 0.0,
+      "train_avg_edit_distance": 6.268,
+      "train_normalized_edit_distance": 1.2535999999999998,
+      "train_loss": 21.942623257637024,
+      "val_accuracy": 0.0,
+      "val_char_accuracy": 0.0,
+      "val_avg_edit_distance": 5.0,
+      "val_normalized_edit_distance": 1.0,
+      "val_loss": 11.431633472442627
+    },
+    {
+      "epoch": 2,
+      "train_accuracy": 0.0,
+      "train_char_accuracy": 0.0,
+      "train_avg_edit_distance": 5.0,
+      "train_normalized_edit_distance": 1.0,
+      "train_loss": 4.316937476396561,
+      "val_accuracy": 0.0,
+      "val_char_accuracy": 0.0,
+      "val_avg_edit_distance": 5.0,
+      "val_normalized_edit_distance": 1.0,
+      "val_loss": 4.18875789642334
+    },
+    {
+      "epoch": 3,
+      "train_accuracy": 0.0,
+      "train_char_accuracy": 0.0,
+      "train_avg_edit_distance": 5.0,
+      "train_normalized_edit_distance": 1.0,
+      "train_loss": 3.8754917085170746,
+      "val_accuracy": 0.0,
+      "val_char_accuracy": 0.0,
+      "val_avg_edit_distance": 5.0,
+      "val_normalized_edit_distance": 1.0,
+      "val_loss": 3.855713367462158
+    }
+  ]
+}

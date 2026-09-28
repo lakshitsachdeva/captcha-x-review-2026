@@ -1,0 +1,17 @@
+train_generator,test_generator,difficulty,num_samples,exact_accuracy,char_accuracy,avg_edit_distance
+pil_controlled,pil_controlled,medium,200,0.0,0.0,5.0
+pil_controlled,captcha_image,medium,200,0.0,0.0,5.0
+pil_controlled,opencv_text,medium,200,0.0,0.0,5.0
+pil_controlled,wand_text,medium,200,0.0,0.0,5.0
+captcha_image,pil_controlled,medium,200,0.0,0.0,5.0
+captcha_image,captcha_image,medium,200,0.0,0.0,5.0
+captcha_image,opencv_text,medium,200,0.0,0.0,5.0
+captcha_image,wand_text,medium,200,0.0,0.0,5.0
+opencv_text,pil_controlled,medium,200,0.0,0.0,5.0
+opencv_text,captcha_image,medium,200,0.0,0.0,5.0
+opencv_text,opencv_text,medium,200,0.0,0.0,5.0
+opencv_text,wand_text,medium,200,0.0,0.0,5.0
+wand_text,pil_controlled,medium,200,0.0,0.0,5.0
+wand_text,captcha_image,medium,200,0.0,0.0,5.0
+wand_text,opencv_text,medium,200,0.0,0.0,5.0
+wand_text,wand_text,medium,200,0.0,0.0,5.0

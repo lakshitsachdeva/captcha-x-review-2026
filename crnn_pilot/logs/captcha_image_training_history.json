@@ -1,0 +1,41 @@
+[
+  {
+    "epoch": 1,
+    "train_accuracy": 0.0,
+    "train_char_accuracy": 0.0,
+    "train_avg_edit_distance": 6.283,
+    "train_normalized_edit_distance": 1.2566,
+    "train_loss": 21.919994831085205,
+    "val_accuracy": 0.0,
+    "val_char_accuracy": 0.0,
+    "val_avg_edit_distance": 5.0,
+    "val_normalized_edit_distance": 1.0,
+    "val_loss": 10.22414255142212
+  },
+  {
+    "epoch": 2,
+    "train_accuracy": 0.0,
+    "train_char_accuracy": 0.0,
+    "train_avg_edit_distance": 5.0,
+    "train_normalized_edit_distance": 1.0,
+    "train_loss": 4.357075572013855,
+    "val_accuracy": 0.0,
+    "val_char_accuracy": 0.0,
+    "val_avg_edit_distance": 5.0,
+    "val_normalized_edit_distance": 1.0,
+    "val_loss": 4.003616571426392
+  },
+  {
+    "epoch": 3,
+    "train_accuracy": 0.0,
+    "train_char_accuracy": 0.0,
+    "train_avg_edit_distance": 5.0,
+    "train_normalized_edit_distance": 1.0,
+    "train_loss": 3.9134956002235413,
+    "val_accuracy": 0.0,
+    "val_char_accuracy": 0.0,
+    "val_avg_edit_distance": 5.0,
+    "val_normalized_edit_distance": 1.0,
+    "val_loss": 3.8328691720962524
+  }
+]
