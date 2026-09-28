@@ -38,7 +38,7 @@
 
 \affil[1]{\orgname{Institution withheld for peer review}, \orgaddress{\country{Anonymous}}}
 
-\abstract{Text-based CAPTCHAs remain widely studied, but published results often depend as much on the benchmark generator as on the recognition model. We examine this problem under controlled synthetic conditions and make four contributions. First, we document a defect reported in the original CAPTCHA generation pipeline and replace that renderer with a controlled implementation. The original pre-repair image archive is unavailable, so we do not claim a reproducible quantitative re-run of that state; instead, we provide a reproducible audit of the corrected release and a separately labeled captcha-library proxy. Second, we construct CAPTCHA-X, a 160,000-image benchmark spanning four generators and four difficulty levels: \texttt{pil\_controlled}, \texttt{captcha\_image}, \texttt{opencv\_text}, and \texttt{wand\_text}. Third, fixed-slot classifiers show severe cross-generator instability: models exceeding 97\% and 99\% exact accuracy on matched \texttt{pil\_controlled} and \texttt{opencv\_text} medium sets fall below 6\% and 21\% on \texttt{captcha\_image} and \texttt{wand\_text}, showing that benchmark outcomes can be dominated by generator choice rather than model capability. Fourth, we report reliability diagnostics for exact accuracy, calibration error, out-of-distribution AUROC, abstention behavior, and a vulnerability score across all 4$\times$4 train/test transfers. Transfer is asymmetric and structured, no model generalizes meaningfully to \texttt{captcha\_image}, and calibration deteriorates sharply under transfer. The study is deliberately limited to synthetic images to isolate benchmark behavior under controlled conditions.}
+\abstract{Text-based CAPTCHAs remain widely studied, but published results often depend as much on the benchmark generator as on the recognition model. We examine this problem under controlled synthetic conditions and make four contributions. First, we document a defect reported in the original CAPTCHA generation pipeline and replace that renderer with a controlled implementation. The original pre-repair image archive is unavailable, so we do not claim a reproducible quantitative re-run of that state; instead, we provide a reproducible audit of the corrected release and a separately labeled captcha-library proxy. Second, we construct CAPTCHA-X, a 160,000-image benchmark spanning four generators and four difficulty levels: \texttt{pil\_controlled}, \texttt{captcha\_image}, \texttt{opencv\_text}, and \texttt{wand\_text}. Third, under the fixed-slot protocol, classifiers show severe cross-generator instability: models exceeding 97\% and 99\% exact accuracy on matched \texttt{pil\_controlled} and \texttt{opencv\_text} medium sets fall below 6\% and 21\% on \texttt{captcha\_image} and \texttt{wand\_text}, showing that benchmark outcomes can be dominated by generator choice rather than model capability. Fourth, we report reliability diagnostics for exact accuracy, calibration error, out-of-distribution AUROC, abstention behavior, and a vulnerability score across all 4$\times$4 train/test transfers. Transfer is asymmetric and structured, no model generalizes meaningfully to \texttt{captcha\_image}, and calibration deteriorates sharply under transfer. The study is deliberately limited to synthetic images to isolate benchmark behavior under controlled conditions.}
 
 \keywords{CAPTCHA; benchmark validity; generator diversity; cross-generator transfer; calibration; synthetic evaluation}
 
@@ -164,16 +164,18 @@ if
   \right] < \delta,
 \end{equation}
 where $\phi(x)$ is a feature vector representing some form of distortion in
-image $x$ (e.g., pixel variance, frequency energy, stroke discontinuities)
-and $\phi_P$ is estimated before evaluation as the coordinate-wise median of
-1,000 images produced by the corrected PIL renderer at profile $P$, using the
-same image size, alphabet, and seed. In the operational audit, $\phi(x)$
-contains normalized background standard deviation, background high-frequency
-FFT ratio, and foreground-pixel fraction; all components are scaled to $[0,1]$.
-Thus $\varepsilon=0.01$ is a Euclidean distance on this normalized feature
-vector, and $\delta$ is the observed flagged fraction. The reference is fixed
-before testing a generator and is not estimated from that generator's own
-outputs.
+image $x$ (e.g., pixel variance, frequency energy, stroke discontinuities).
+For a reproducible cross-family audit, $\phi_P$ is fixed before testing as the
+coordinate-wise median of 1,000 images produced by the corrected PIL renderer
+at profile $P$, using the same image size, alphabet, and seed. The prescribed
+vector contains normalized background standard deviation, background
+high-frequency FFT ratio, and foreground-pixel fraction; all components are
+scaled to $[0,1]$. Thus $\varepsilon=0.01$ is a Euclidean distance on this
+normalized vector, and $\delta$ is the observed flagged fraction. The
+available legacy reports predate this reference-vector calculation and report
+the raw-pixel/FFT flag separately in Table~\ref{tab:verifier}; they should not
+be read as measurements of the new distance. The reference is never estimated
+from the tested generator's own outputs.
 \end{definition}
 
 \noindent A generator is said to be dishonest if there is non-negligible probability
@@ -238,7 +240,7 @@ fixed-slot architecture.
 
 Before proceeding to describe the new benchmark's technical characteristics, it is important to describe the flaw in the original design which has made the benchmark interpretation impossible for the researchers building CAPTCHA evaluations based on an external renderer.
 
-In the first dataset release, the rendering module consisted of the Python \texttt{captcha} library renderer~\cite{captcha_lib}. As mentioned earlier, the CAPTCHA library provided distortion parameters -- rotation, shear, line clutter and dot density -- which could be configured as zero, thereby allowing one to create a ``clean'' baseline. The underlying assumption, also present in the dataset's metadata and manuscript draft, was that by setting the aforementioned parameters to zero, one could produce distortion-free images.
+In the first dataset release, the rendering module consisted of the Python \texttt{captcha} library renderer~\cite{captcha_lib}. As mentioned earlier, the CAPTCHA library provided distortion parameters -- rotation, shear, line clutter and dot density -- which could be configured as zero, thereby allowing one to create a ``clean'' baseline. The underlying assumption, also present in the dataset metadata and release documentation, was that by setting the aforementioned parameters to zero, one could produce distortion-free images.
 
 The assumption turned out to be false. The analysis of the images generated by the renderer with all distortion parameters set to zero showed that the nuisance marks were produced internally by the renderer and were not influenced by the specific parameters' settings. The metadata stated that there was zero clutter, but the pixel data indicated otherwise. This resulted in the fact that the ``clean'' split learned from images with different difficulty from the one described, affected the reproducibility of the accuracy metric according to the given configuration and made difficulty comparisons between the clean and noisy images impossible due to contamination of the baseline.
 
@@ -247,7 +249,7 @@ The corrective action was to replace the renderer with a PIL implementation that
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\columnwidth]{figures/benchmark_examples.png}
-    \caption{Representative samples of the cleaned clean benchmark dataset are shown below. These are images containing a five-character string chosen from the set of 32 characters and created without any geometric distortions, clutter, blurring, or additive noise. This can be discerned based on the data contained in the metadata CSV file. }
+    \caption{Representative samples of the corrected clean benchmark are shown below. These are images containing a five-character string chosen from the set of 32 characters and created without any geometric distortions, clutter, blurring, or additive noise. This can be discerned based on the data contained in the metadata CSV file. }
     \label{fig:examples}
 \end{figure}
 
@@ -354,7 +356,7 @@ This is the appropriate threat model for measuring matched-distribution vulnerab
 
 \subsection{Benchmark Configuration}
 
-The benchmark dataset contains 8{,}000 synthetic five-character CAPTCHAs created using the fixed renderer model.The split is 5{,}600 training / 1{,}600 validation / 800 test. Table~\ref{tab:benchmark} documents the complete configuration.
+The core benchmark contains 8{,}000 synthetic five-character CAPTCHAs created using the fixed renderer model. Its split is 5{,}600 training / 1{,}600 validation / 800 test. Table~\ref{tab:benchmark} documents both the core and full-scale configurations.
 
 \begin{table}[!htbp]
 \centering
@@ -895,7 +897,7 @@ condition evaluated in this study. We use the formulation:
 \label{eq:vscore}
 R = w_1 A_{\mathrm{exact}} + w_2 (1 - \mathrm{ECE}) - w_3 H,
 \end{equation}
-where $H$ is the average prediction entropy. Given the default weights
+where $H$ is the normalized average prediction entropy defined above. Given the default weights
 $w_1=0.4$, $w_2=0.2$, and $w_3=0.2$, a high V-Score records stronger solver
 evidence: high accuracy, good calibration, and low uncertainty. It is a
 summary of these measurements, not a deployment-level vulnerability estimate.
@@ -956,7 +958,7 @@ serve any purpose in practice: it neither solves CAPTCHA problems nor
 provides a low-uncertainty basis for decisions.
 This is the type of situation that the V-Score is meant to detect.
 
-\textbf{Sensitivity analysis.} Table~\ref{tab:vscore_sensitivity} shows the top five rows for five illustrative weight configurations. The underlying sensitivity artifact evaluates all sixteen generator--difficulty rows under every listed configuration; lower-scoring rows were retained in that artifact rather than omitted from the computation. Notably, the relative ranking of
+\textbf{Sensitivity analysis.} Table~\ref{tab:vscore_sensitivity} shows the top five rows for five illustrative weight configurations. The underlying sensitivity artifact evaluates all sixteen matched generator--difficulty rows under each of the five explicitly listed weight configurations; lower-scoring rows were retained rather than omitted from the computation. OOD AUROC is reported separately and is not a V-Score term. Notably, the relative ranking of
 \texttt{opencv\_text} (most vulnerable to attacks) and \texttt{captcha\_image}
 (least vulnerable according to accuracy but also least reliable) remains
 unchanged across the all-16-condition sensitivity analysis, although this
@@ -967,19 +969,18 @@ these weights are theoretically optimal.
 \begin{table}[!htbp]
 \centering
 \caption{Sensitivity analysis of the V-Score rankings for the top five generator--difficulty
-configurations, as specified by the default ranking. The columns present V-Score values
-under the selected weight configurations, as calculated using the provided V-Score Implementations.}
+configurations, as specified by the default ranking. The columns present V-Score values under the five explicitly listed weight configurations (default $(0.4,0.2,0.2)$, accuracy-only $(1,0,0)$, calibration-heavy $(0,0.8,0.2)$, entropy-heavy $(0,0.2,0.8)$, and equal-weight $(1/3,1/3,1/3)$), calculated using the provided implementation.}
 \label{tab:vscore_sensitivity}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lccccc}
 \toprule
-Condition & Default & Accuracy-only & Calibration-heavy & Entropy-heavy & Balanced \\
+Condition & Default & Accuracy-only & Calibration-heavy & Entropy-heavy & Equal-weight \\
 \midrule
-\texttt{opencv\_text}@clean    & 0.6000 & 1.0000 & 0.7999 & 0.2999 & 0.4999 \\
-\texttt{opencv\_text}@easy     & 0.5996 & 0.9993 & 0.7995 & 0.2997 & 0.4997 \\
-\texttt{opencv\_text}@medium   & 0.5988 & 0.9980 & 0.7986 & 0.2990 & 0.4989 \\
-\texttt{pil\_controlled}@clean & 0.5980 & 0.9967 & 0.7981 & 0.2981 & 0.4983 \\
-\texttt{pil\_controlled}@easy  & 0.5917 & 0.9860 & 0.7904 & 0.2945 & 0.4931 \\
+\texttt{opencv\_text}@clean    & 0.6000 & 1.0000 & 0.7999 & 0.1999 & 0.6666 \\
+\texttt{opencv\_text}@easy     & 0.5996 & 0.9993 & 0.7995 & 0.1998 & 0.6662 \\
+\texttt{opencv\_text}@medium   & 0.5988 & 0.9980 & 0.7986 & 0.1991 & 0.6653 \\
+\texttt{pil\_controlled}@clean & 0.5980 & 0.9967 & 0.7983 & 0.1982 & 0.6644 \\
+\texttt{pil\_controlled}@easy  & 0.5917 & 0.9860 & 0.7908 & 0.1957 & 0.6575 \\
 \bottomrule
 \end{tabular}
 }
@@ -1002,7 +1003,7 @@ We present a hierarchical structure with the generator, perception, reasoning an
 
 \subsection{Generator Layer: Auditable Difficulty}
 
-To evaluate the performance of the generator on real-life CAPTCHAs, it is necessary to parameterize its behavior in a way that would allow us to audit this process, i.e., trace all the steps taken by the generator to create a particular image. Specifically, the latter should come with a metadata annotation indicating exactly what set of parameters was used. As such, the current corrected PIL-based implementation of rendering covers only the case of clean images, which allows running controlled ablation studies of various distortions.
+To evaluate the performance of the generator under controlled synthetic conditions, it is necessary to parameterize its behavior in a way that would allow us to audit this process, i.e., trace all the steps taken by the generator to create a particular image. Specifically, the latter should come with a metadata annotation indicating exactly what set of parameters was used. As such, the current corrected PIL-based implementation of rendering covers only the case of clean images, which allows running controlled ablation studies of various distortions.
 
 \subsection{Perception Layer: Stronger Backbone}
 

@@ -4,7 +4,7 @@ The reported manuscript numbers are stored as CSV/JSON artifacts under `analysis
 
 - `analysis/full_scale/transfer_matrix_exact_accuracy.csv`: 4x4 transfer matrix.
 - `analysis/full_scale/evaluation_summary.csv`: exact accuracy and reliability summaries.
-- `analysis/full_scale/vscore_table.csv` and `vscore_sensitivity.csv`: V-Score and all-row sensitivity calculations.
+- `analysis/full_scale/vscore_table.csv` and `vscore_sensitivity.csv`: V-Score and matched-row sensitivity calculations (16 rows under five named configurations).
 - `analysis/full_scale/ood_entropy_summary.csv`: entropy OOD results, including below-chance AUROC values.
 - `analysis/full_scale/temperature_scaling_summary.csv`: calibration comparison.
 - `analysis/seed_pilot/`: five-seed reduced fixed-slot summaries.
